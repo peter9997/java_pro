@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+<meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
+    <th:block th:include="include :: header('新增客户原样')" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-sample-add" enctype="mulitpart/form-data" >
+        <div class="form-group">
+            <label class="col-sm-3 control-label">客户编号：</label>
+            <div class="col-sm-8">
+                <select name="customerid" class="form-control m-b" th:with="type=${@dict.getType('common_customer')}">
+                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">样品编号：</label>
+            <div class="col-sm-8">
+                <input name="samplecode" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">样品名：</label>
+            <div class="col-sm-8">
+                <input name="samplename" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">oem：</label>
+            <div class="col-sm-8">
+                <input name="oem" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">国家：</label>
+            <div class="col-sm-8">
+                <select name="country" class="form-control m-b" th:with="type=${@dict.getType('commom_country')}">
+                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">极数：</label>
+            <div class="col-sm-8">
+                <select name="poleCount" class="form-control m-b" th:with="type=${@dict.getType('common_pole_count')}">
+                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">图片上传：</label>
+            <div class="file-loading col-sm-8">
+                <!--<button type="button" class="layui-btn layui-btn-normal" id="test8">选择文件</button>-->
+<!--                 <input  class="file"  data-theme="fas" id="filePath" name="file"  type="file"> -->
+                <input class="input-file-remove-style" type="file" name="file" id="file" >
+                <input type="hidden" id="pic" name="pic">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">备注：</label>
+            <div class="col-sm-8">
+                <textarea name="besides" class="form-control"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/sample";
+    $("#form-sample-add").validate({
+        focusCleanup: true
+    });
+	
+    function submitHandler(){
+    	 var formData = new FormData();
+         if ($('#file')[0].files[0] == null) {
+             $.modal.alertWarning("请先选择文件路径");
+             return false;
+         }
+         formData.append('fileName', $("#fileName").val());
+         formData.append('file', $('#file')[0].files[0]);
+         $.ajax({
+     		url: prefix + "/uploadFile",
+     		async: false,
+     		type: 'post',
+     		cache: false,
+     		data: formData,
+     		processData: false,
+     		contentType: false,
+     		dataType: "json",
+     		success: function(result) {
+     			var fileName = result.fileName;
+     			$("#pic").val(fileName);
+     			saveData();
+     		}
+     	});
+    }
+    function saveData() {
+        if ($.validate.form()) {
+           $.operate.save(prefix + "/add", $('#form-sample-add').serialize());
+        }
+    }
+//    upload.render({
+//        elem: '#test8'
+//        ,url: 'https://httpbin.org/post' //改成您自己的上传接口
+//        ,auto: false
+//        //,multiple: true
+//        ,bindAction: '#test9'
+//        ,done: function(res){
+//            layer.msg('上传成功');
+//            console.log(res)
+//        }
+//    });
+//    function uploadFile() {
+//        var formData = new FormData();
+//        if($('#file')[0].files[0] == null) {
+//            $.modal.alertWarning("请先选择文件路径");
+//            return false;
+//        }
+//        formData.append('fileName', $("#fileName").val());
+//        formData.append('file', $('#file')[0].files[0]);
+//        $.ajax({
+//            url: prefix + "/add",
+//            type: 'post',
+//            cache: false,
+//            data: formData,
+//            processData: false,
+//            contentType: false,
+//            dataType: "json",
+//            success: function(result) {
+//                $.operate.successCallback(result);
+//            }
+//        });}
+</script>
+</body>
+</html>

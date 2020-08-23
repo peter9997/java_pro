@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CarSampleMapper">
+
+    <resultMap type="CarSample" id="CarSampleResult">
+        <result property="sampleid"    column="sampleId"    />
+        <result property="samplecode"    column="sampleCode"    />
+        <result property="customerid"    column="customerId"    />
+        <result property="samplename"    column="sampleName"    />
+        <result property="oem"    column="oem"    />
+        <result property="country"    column="country"    />
+        <result property="poleCount"    column="pole_count"    />
+        <result property="pic"    column="pic"    />
+        <result property="besides"    column="besides"    />
+    </resultMap>
+
+    <sql id="selectCarSampleVo">
+        select sampleId, sampleCode, customerId, sampleName, oem, country, pole_count, pic, besides from car_sample
+    </sql>
+
+    <select id="selectCarSampleList" parameterType="CarSample" resultMap="CarSampleResult">
+        <include refid="selectCarSampleVo"/>
+        <where>
+            <if test="customerid != null "> and customerId = #{customerid}</if>
+            <if test="samplename != null  and samplename != ''"> and sampleName like concat('%', #{samplename}, '%')</if>
+            <if test="oem != null  and oem != ''"> and oem = #{oem}</if>
+            <if test="country != null "> and country = #{country}</if>
+            <if test="poleCount != null "> and pole_count = #{poleCount}</if>
+            <if test="pic != null  and pic != ''"> and pic = #{pic}</if>
+            <if test="besides != null  and besides != ''"> and besides = #{besides}</if>
+        </where>
+    </select>
+
+    <select id="selectCarSampleById" parameterType="Integer" resultMap="CarSampleResult">
+        <include refid="selectCarSampleVo"/>
+        where sampleId = #{sampleid}
+    </select>
+
+    <insert id="insertCarSample" parameterType="CarSample" useGeneratedKeys="true" keyProperty="sampleid">
+        insert into car_sample
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="samplecode != null">sampleCode,</if>
+            <if test="customerid != null">customerId,</if>
+            <if test="samplename != null">sampleName,</if>
+            <if test="oem != null">oem,</if>
+            <if test="country != null">country,</if>
+            <if test="poleCount != null">pole_count,</if>
+            <if test="pic != null">pic,</if>
+            <if test="besides != null">besides,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="samplecode != null">#{samplecode},</if>
+            <if test="customerid != null">#{customerid},</if>
+            <if test="samplename != null">#{samplename},</if>
+            <if test="oem != null">#{oem},</if>
+            <if test="country != null">#{country},</if>
+            <if test="poleCount != null">#{poleCount},</if>
+            <if test="pic != null">#{pic},</if>
+            <if test="besides != null">#{besides},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCarSample" parameterType="CarSample">
+        update car_sample
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="samplecode != null">sampleCode = #{samplecode},</if>
+            <if test="customerid != null">customerId = #{customerid},</if>
+            <if test="samplename != null">sampleName = #{samplename},</if>
+            <if test="oem != null">oem = #{oem},</if>
+            <if test="country != null">country = #{country},</if>
+            <if test="poleCount != null">pole_count = #{poleCount},</if>
+            <if test="pic != null">pic = #{pic},</if>
+            <if test="besides != null">besides = #{besides},</if>
+        </trim>
+        where sampleId = #{sampleid}
+    </update>
+
+    <delete id="deleteCarSampleById" parameterType="Integer">
+        delete from car_sample where sampleId = #{sampleid}
+    </delete>
+
+    <delete id="deleteCarSampleByIds" parameterType="String">
+        delete from car_sample where sampleId in
+        <foreach item="sampleid" collection="array" open="(" separator="," close=")">
+            #{sampleid}
+        </foreach>
+    </delete>
+
+</mapper>
